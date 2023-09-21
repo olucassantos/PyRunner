@@ -1,6 +1,21 @@
 import pygame
 from sys import exit
 
+def display_score():
+    current_time = pygame.time.get_ticks() - start_time
+
+    color = (64, 64, 64)
+    if current_time > 60000:
+        color = '#FF6347'
+    elif current_time > 90000:
+        color = '#FF4500'
+    elif current_time > 120000:
+        color = '#FF0000'
+
+    score_surf = pixel_type_font.render(str(current_time), False, color)
+    score_rect = score_surf.get_rect(center = (400, 50))
+    tela.blit(score_surf, score_rect)
+
 # Inicializa o pygame
 pygame.init()
 
@@ -18,6 +33,8 @@ pixel_type_font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
 game_active = True
 
+start_time = 0
+
 # Carrega as imagens como superfícies
 sky_surf = pygame.image.load('graphics/Sky.png').convert()
 ground_surf = pygame.image.load('graphics/ground.png').convert()
@@ -28,10 +45,6 @@ snail_retangle = snail_surf.get_rect(midbottom = (600, 300))
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
 player_retangle = player_surf.get_rect(midbottom = (80, 300))
 player_gravity = 0 
-
-# Textos 
-score_surf = pixel_type_font.render('My game', False, (64, 64, 64))
-score_rect = score_surf.get_rect(center = (400, 50))
 
 while True:
     for event in pygame.event.get():
@@ -53,16 +66,14 @@ while True:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
                 snail_retangle.left = 800
+                start_time = pygame.time.get_ticks()
 
     if game_active:
         # Desenha as superfícies na tela
         tela.blit(sky_surf, (0, 0))
         tela.blit(ground_surf, (0, 300))
 
-        pygame.draw.rect(tela, '#c0e8ec', score_rect)
-        pygame.draw.rect(tela, '#c0e8ec', score_rect, 10, 1)
-
-        tela.blit(score_surf, score_rect)
+        display_score()
         
         # Movimenta o caracol para a esqueda
         snail_retangle.x -= 5
