@@ -12,7 +12,7 @@ def display_score():
     elif current_time > 120000:
         color = '#FF0000'
 
-    score_surf = pixel_type_font.render(str(current_time), False, color)
+    score_surf = pixel_type_font.render(f'Pontos: {current_time}', False, color)
     score_rect = score_surf.get_rect(center = (400, 50))
     tela.blit(score_surf, score_rect)
 
@@ -45,6 +45,18 @@ snail_retangle = snail_surf.get_rect(midbottom = (600, 300))
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
 player_retangle = player_surf.get_rect(midbottom = (80, 300))
 player_gravity = 0 
+
+# Tela de Início
+player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+player_stand = pygame.transform.rotozoom(player_stand, 0, 2)
+player_stand_rect = player_stand.get_rect(center = (400, 200))
+
+titulo = pixel_type_font.render('Runner', False, (111, 196, 169))
+titulo_rect = titulo.get_rect(center = (400, 80))
+
+subtitulo = pixel_type_font.render('Pressione espaco para jogar', False, (111, 196, 169))
+subtitulo_rect = subtitulo.get_rect(center = (400, 330))
+
 
 while True:
     for event in pygame.event.get():
@@ -93,7 +105,12 @@ while True:
         if player_retangle.colliderect(snail_retangle):
             game_active = False
     else:
-        tela.fill('Yellow')
+        tela.fill((94, 129, 162))
+        tela.blit(player_stand, player_stand_rect)
+
+        tela.blit(titulo, titulo_rect)
+        tela.blit(subtitulo, subtitulo_rect)
+
     # Atualiza a tela
     pygame.display.update()
 
