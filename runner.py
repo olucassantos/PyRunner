@@ -2,19 +2,20 @@ import pygame
 from sys import exit
 
 def display_score():
-    current_time = pygame.time.get_ticks() - start_time
+    score = pygame.time.get_ticks() - start_time
 
     color = (64, 64, 64)
-    if current_time > 60000:
+    if score > 60000:
         color = '#FF6347'
-    elif current_time > 90000:
+    elif score > 90000:
         color = '#FF4500'
-    elif current_time > 120000:
+    elif score > 120000:
         color = '#FF0000'
 
-    score_surf = pixel_type_font.render(f'Pontos: {current_time}', False, color)
+    score_surf = pixel_type_font.render(f'Pontos: {score}', False, color)
     score_rect = score_surf.get_rect(center = (400, 50))
     tela.blit(score_surf, score_rect)
+    return score
 
 # Inicializa o pygame
 pygame.init()
@@ -31,9 +32,11 @@ relogio = pygame.time.Clock()
 # Cria as fontes do jogo
 pixel_type_font = pygame.font.Font('font/Pixeltype.ttf', 50)
 
-game_active = True
+game_active = False
 
 start_time = 0
+
+score = 0
 
 # Carrega as imagens como superfícies
 sky_surf = pygame.image.load('graphics/Sky.png').convert()
@@ -51,12 +54,11 @@ player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alp
 player_stand = pygame.transform.rotozoom(player_stand, 0, 2)
 player_stand_rect = player_stand.get_rect(center = (400, 200))
 
-titulo = pixel_type_font.render('Runner', False, (111, 196, 169))
-titulo_rect = titulo.get_rect(center = (400, 80))
+game_name = pixel_type_font.render('Runner', False, (111, 196, 169))
+game_name_rect = game_name.get_rect(center = (400, 80))
 
-subtitulo = pixel_type_font.render('Pressione espaco para jogar', False, (111, 196, 169))
-subtitulo_rect = subtitulo.get_rect(center = (400, 330))
-
+instructions_text = pixel_type_font.render('Pressione espaco para jogar', False, (111, 196, 169))
+instructions_rect = instructions_text.get_rect(center = (400, 330))
 
 while True:
     for event in pygame.event.get():
@@ -85,7 +87,7 @@ while True:
         tela.blit(sky_surf, (0, 0))
         tela.blit(ground_surf, (0, 300))
 
-        display_score()
+        score = display_score()
         
         # Movimenta o caracol para a esqueda
         snail_retangle.x -= 5
@@ -108,8 +110,15 @@ while True:
         tela.fill((94, 129, 162))
         tela.blit(player_stand, player_stand_rect)
 
-        tela.blit(titulo, titulo_rect)
-        tela.blit(subtitulo, subtitulo_rect)
+        score_text = pixel_type_font.render(f'Seus pontos: {score}', False, (111, 196, 169))
+        score_text_rect = score_text.get_rect(center = (400, 365))
+
+        tela.blit(game_name, game_name_rect)
+
+        tela.blit(instructions_text, instructions_rect)
+
+        if score > 0:
+            tela.blit(score_text, score_text_rect)
 
     # Atualiza a tela
     pygame.display.update()
