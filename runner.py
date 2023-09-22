@@ -1,21 +1,36 @@
 import pygame
 from sys import exit
+from random import randint
 
 def display_score():
     score = pygame.time.get_ticks() - start_time
 
     color = (64, 64, 64)
-    if score > 60000:
+    if score > 35000:
         color = '#FF6347'
-    elif score > 90000:
+    elif score > 60000:
         color = '#FF4500'
-    elif score > 120000:
+    elif score > 90000:
         color = '#FF0000'
 
     score_surf = pixel_type_font.render(f'Pontos: {score}', False, color)
     score_rect = score_surf.get_rect(center = (400, 50))
     tela.blit(score_surf, score_rect)
     return score
+
+def obstacle_movement(obstacle_list):
+    # Checa se há obstáculos na lista
+    if obstacle_list:
+        for obstacle_rect in obstacle_list:
+            obstacle_rect.x -= 5
+            tela.blit(snail_surf, obstacle_rect)
+
+        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
+
+        return obstacle_list
+    else:
+        return []
+    
 
 # Inicializa o pygame
 pygame.init()
@@ -42,9 +57,13 @@ score = 0
 sky_surf = pygame.image.load('graphics/Sky.png').convert()
 ground_surf = pygame.image.load('graphics/ground.png').convert()
 
+# Obstáculos
 snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
 snail_retangle = snail_surf.get_rect(midbottom = (600, 300))
 
+obstacle_rect_list = []
+
+#Player
 player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
 player_retangle = player_surf.get_rect(midbottom = (80, 300))
 player_gravity = 0 
@@ -59,6 +78,10 @@ game_name_rect = game_name.get_rect(center = (400, 80))
 
 instructions_text = pixel_type_font.render('Pressione espaco para jogar', False, (111, 196, 169))
 instructions_rect = instructions_text.get_rect(center = (400, 330))
+
+# Timer
+obstacle_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(obstacle_timer, 1500)
 
 while True:
     for event in pygame.event.get():
@@ -82,6 +105,9 @@ while True:
                 snail_retangle.left = 800
                 start_time = pygame.time.get_ticks()
 
+        if event.type == obstacle_timer and game_active:
+            obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100), 300)))
+
     if game_active:
         # Desenha as superfícies na tela
         tela.blit(sky_surf, (0, 0))
@@ -89,9 +115,10 @@ while True:
 
         score = display_score()
         
-        # Movimenta o caracol para a esqueda
-        snail_retangle.x -= 5
-        if snail_retangle.right <= 0: snail_retangle.left = 800
+        # velocidade = 5 + score // 3000
+        # # Movimenta o caracol para a esqueda
+        # snail_retangle.x -= velocidade
+        # if snail_retangle.right <= 0: snail_retangle.left = 800
 
         # Desenha o caracol
         tela.blit(snail_surf, snail_retangle)
@@ -102,6 +129,9 @@ while True:
         if player_retangle.bottom >= 300: player_retangle.bottom = 300
 
         tela.blit(player_surf, player_retangle)
+
+        # Movimentos do Obstáculo
+        obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
         # Verifica se houve colisão entre o jogador e o caracol
         if player_retangle.colliderect(snail_retangle):
