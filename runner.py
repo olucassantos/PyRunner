@@ -40,6 +40,18 @@ def collisions(player, obstacles):
 
     return True
 
+def player_animation():
+    global player_surf, player_index
+
+    # Animação de andando se estiver no chão
+    if(player_retangle.bottom < 300):
+        # Jump
+        player_surf = player_jump
+    else:
+        player_index += 0.1
+        if player_index >= len(player_walk): player_index = 0
+        player_surf = player_walk[int(player_index)]
+
 # Inicializa o pygame
 pygame.init()
 
@@ -72,7 +84,13 @@ fly_surf = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
 obstacle_rect_list = []
 
 #Player
-player_surf = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+player_walk_1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
+player_walk_2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+player_walk = [player_walk_1, player_walk_2]
+player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
+player_index = 0
+
+player_surf = player_walk[player_index];
 player_retangle = player_surf.get_rect(midbottom = (80, 300))
 player_gravity = 0 
 
@@ -130,6 +148,7 @@ while True:
         player_retangle.y += player_gravity
         if player_retangle.bottom >= 300: player_retangle.bottom = 300
 
+        player_animation()
         tela.blit(player_surf, player_retangle)
 
         # Movimentos dos Obstáculos
