@@ -23,7 +23,9 @@ def obstacle_movement(obstacle_list):
     if obstacle_list:
         for obstacle_rect in obstacle_list:
             obstacle_rect.x -= 5
-            tela.blit(snail_surf, obstacle_rect)
+
+            if obstacle_rect.bottom == 300: tela.blit(snail_surf, obstacle_rect)
+            else: tela.blit(fly_surf, obstacle_rect)
 
         obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
 
@@ -59,7 +61,7 @@ ground_surf = pygame.image.load('graphics/ground.png').convert()
 
 # Obstáculos
 snail_surf = pygame.image.load('graphics/snail/snail1.png').convert_alpha()
-snail_retangle = snail_surf.get_rect(midbottom = (600, 300))
+fly_surf = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
 
 obstacle_rect_list = []
 
@@ -81,7 +83,7 @@ instructions_rect = instructions_text.get_rect(center = (400, 330))
 
 # Timer
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 1500)
+pygame.time.set_timer(obstacle_timer, 1000)
 
 while True:
     for event in pygame.event.get():
@@ -102,11 +104,13 @@ while True:
         else:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 game_active = True
-                snail_retangle.left = 800
                 start_time = pygame.time.get_ticks()
 
         if event.type == obstacle_timer and game_active:
-            obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100), 300)))
+            if randint(0, 2):
+                obstacle_rect_list.append(snail_surf.get_rect(bottomright = (randint(900, 1100), 300)))
+            else:
+                obstacle_rect_list.append(fly_surf.get_rect(bottomright = (randint(900, 1100), 210)))
 
     if game_active:
         # Desenha as superfícies na tela
@@ -121,7 +125,7 @@ while True:
         # if snail_retangle.right <= 0: snail_retangle.left = 800
 
         # Desenha o caracol
-        tela.blit(snail_surf, snail_retangle)
+        # tela.blit(snail_surf, snail_retangle)
 
         # Desenha o jogador
         player_gravity += 1
@@ -134,8 +138,8 @@ while True:
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
         # Verifica se houve colisão entre o jogador e o caracol
-        if player_retangle.colliderect(snail_retangle):
-            game_active = False
+        # if player_retangle.colliderect(snail_retangle):
+        #     game_active = False
     else:
         tela.fill((94, 129, 162))
         tela.blit(player_stand, player_stand_rect)
