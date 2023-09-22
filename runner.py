@@ -33,6 +33,12 @@ def obstacle_movement(obstacle_list):
     else:
         return []
     
+def collisions(player, obstacles):
+    if obstacles:
+        for obstacle_rect in obstacles:
+            if player.colliderect(obstacle_rect): return False
+
+    return True
 
 # Inicializa o pygame
 pygame.init()
@@ -137,12 +143,24 @@ while True:
         # Movimentos do Obstáculo
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
+        # collisions
+        game_active = collisions(player_retangle, obstacle_rect_list)
+
         # Verifica se houve colisão entre o jogador e o caracol
         # if player_retangle.colliderect(snail_retangle):
         #     game_active = False
     else:
         tela.fill((94, 129, 162))
         tela.blit(player_stand, player_stand_rect)
+
+        # Reseta o score
+        obstacle_rect_list.clear()
+
+        # Reposiciona o jogador
+        player_retangle.midbottom = (80, 300)
+
+        #limpa a gravidade
+        player_gravity = 0
 
         score_text = pixel_type_font.render(f'Seus pontos: {score}', False, (111, 196, 169))
         score_text_rect = score_text.get_rect(center = (400, 365))
