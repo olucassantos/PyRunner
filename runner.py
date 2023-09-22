@@ -124,14 +124,6 @@ while True:
         tela.blit(ground_surf, (0, 300))
 
         score = display_score()
-        
-        # velocidade = 5 + score // 3000
-        # # Movimenta o caracol para a esqueda
-        # snail_retangle.x -= velocidade
-        # if snail_retangle.right <= 0: snail_retangle.left = 800
-
-        # Desenha o caracol
-        # tela.blit(snail_surf, snail_retangle)
 
         # Desenha o jogador
         player_gravity += 1
@@ -140,15 +132,11 @@ while True:
 
         tela.blit(player_surf, player_retangle)
 
-        # Movimentos do Obstáculo
+        # Movimentos dos Obstáculos
         obstacle_rect_list = obstacle_movement(obstacle_rect_list)
 
         # collisions
         game_active = collisions(player_retangle, obstacle_rect_list)
-
-        # Verifica se houve colisão entre o jogador e o caracol
-        # if player_retangle.colliderect(snail_retangle):
-        #     game_active = False
     else:
         tela.fill((94, 129, 162))
         tela.blit(player_stand, player_stand_rect)
